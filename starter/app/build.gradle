@@ -31,10 +31,11 @@ android {
         returnDefaultValues = true
     }
 
-    //dataBinding {
-    //    enabled = true
-    //    enabledForTests = true
-    //}
+    compileOptions {
+        sourceCompatibility JavaVersion.VERSION_1_8
+        targetCompatibility JavaVersion.VERSION_1_8
+    }
+
     buildFeatures {
         dataBinding true
     }
@@ -122,5 +123,8 @@ dependencies {
     implementation "com.google.android.gms:play-services-location:$playServicesVersion"
     implementation "com.google.android.gms:play-services-maps:$playServicesVersion"
 
+    //Firebase
+    implementation 'com.firebaseui:firebase-ui-auth:8.0.2'
+    implementation platform('com.google.firebase:firebase-bom:31.1.1')
 
 }

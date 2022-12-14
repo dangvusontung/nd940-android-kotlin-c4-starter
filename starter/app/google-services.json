@@ -1,0 +1,39 @@
+{
+  "project_info": {
+    "project_number": "138944270147",
+    "project_id": "udacity-tungdvs",
+    "storage_bucket": "udacity-tungdvs.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:138944270147:android:f40b18050df3db7d7769f6",
+        "android_client_info": {
+          "package_name": "com.udacity.project4"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "138944270147-s5vrlc3rcdr1q0gtnk406r4tbn61aepu.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyCeZwSEB2_e568sIF9KG1OGM3MCGjWwORM"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "138944270147-s5vrlc3rcdr1q0gtnk406r4tbn61aepu.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
