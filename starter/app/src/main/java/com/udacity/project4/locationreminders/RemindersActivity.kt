@@ -19,8 +19,6 @@ import kotlinx.android.synthetic.main.activity_reminders.*
  * The RemindersActivity that holds the reminders fragments
  */
 
-const val REQUEST_FOREGROUND_AND_BACKGROUND_PERMISSION_RESULT_CODE = 1000
-const val REQUEST_FOREGROUND_ONLY = 999
 
 class RemindersActivity : AppCompatActivity() {
 
