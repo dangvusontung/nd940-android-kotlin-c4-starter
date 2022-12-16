@@ -77,6 +77,7 @@ class ReminderListFragment : BaseFragment() {
                 AuthUI.getInstance()
                     .signOut(requireContext())
                     .addOnCompleteListener {
+                        _viewModel.deleteReminders()
                         val intent = Intent(requireActivity(), AuthenticationActivity::class.java)
                         intent.flags = Intent.FLAG_ACTIVITY_CLEAR_TOP
                         startActivity(intent)

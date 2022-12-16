@@ -23,6 +23,7 @@ import androidx.fragment.app.FragmentActivity
 import androidx.fragment.app.testing.FragmentScenario
 import androidx.test.core.app.ActivityScenario
 import androidx.test.espresso.IdlingResource
+import androidx.test.espresso.idling.CountingIdlingResource
 import java.util.UUID
 
 /**
@@ -86,6 +87,23 @@ class DataBindingIdlingResource : IdlingResource {
 
         return bindings + childrenBindings
     }
+
+    companion object {
+        const val RESOURCE = "DataBindingIdlingResource"
+
+        @JvmField
+        val countingIdlingResource = CountingIdlingResource(RESOURCE)
+
+        fun increment() {
+            countingIdlingResource.increment()
+        }
+
+        fun decrement() {
+            if (!countingIdlingResource.isIdleNow) {
+                countingIdlingResource.decrement()
+            }
+        }
+    }
 }
 
 private fun View.getBinding(): ViewDataBinding? = DataBindingUtil.getBinding(this)
@@ -107,5 +125,14 @@ fun DataBindingIdlingResource.monitorActivity(
 fun DataBindingIdlingResource.monitorFragment(fragmentScenario: FragmentScenario<out Fragment>) {
     fragmentScenario.onFragment {
         this.activity = it.requireActivity()
+    }
+}
+
+inline fun <T> wrapEspressoIdlingResource(function: () -> T): T {
+    DataBindingIdlingResource.increment() // Set app as busy.
+    return try {
+        function()
+    } finally {
+        DataBindingIdlingResource.decrement() // Set app as idle.
     }
 }

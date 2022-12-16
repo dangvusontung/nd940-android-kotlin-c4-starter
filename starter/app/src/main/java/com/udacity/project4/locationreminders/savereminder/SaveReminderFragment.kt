@@ -178,8 +178,8 @@ class SaveReminderFragment : BaseFragment() {
             val geofence = Geofence.Builder()
                 .setRequestId(reminderData.id)
                 .setCircularRegion(
-                    reminderData.latitude!!,
-                    reminderData.longitude!!,
+                    reminderData.latitude ?: 0.0,
+                    reminderData.longitude ?: 0.0,
                     GEOFENCE_RADIUS_IN_METERS
                 )
                 .setExpirationDuration(Geofence.NEVER_EXPIRE)
