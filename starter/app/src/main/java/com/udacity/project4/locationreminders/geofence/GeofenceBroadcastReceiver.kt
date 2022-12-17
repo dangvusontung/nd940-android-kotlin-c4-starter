@@ -25,6 +25,7 @@ class GeofenceBroadcastReceiver : BroadcastReceiver() {
     override fun onReceive(context: Context, intent: Intent) {
 
 //TODO: implement the onReceive method to receive the geofencing events at the background
+        Log.d(TAG, "onReceive: Action = ${intent.action}")
         if (intent.action == ACTION_GEOFENCE_EVENT) {
             val geofencingEvent = GeofencingEvent.fromIntent(intent)
 
@@ -50,7 +51,7 @@ class GeofenceBroadcastReceiver : BroadcastReceiver() {
                 GeofenceStatusCodes.GEOFENCE_TOO_MANY_GEOFENCES -> resources.getString(
                     R.string.geofence_too_many_geofences
                 )
-                GeofenceStatusCodes.GEOFENCE_TOO_MANY_PENDING_INTENTS -> resources.getString(
+                    GeofenceStatusCodes.GEOFENCE_TOO_MANY_PENDING_INTENTS -> resources.getString(
                     R.string.geofence_too_many_pending_intents
                 )
                 else -> "Unknown"

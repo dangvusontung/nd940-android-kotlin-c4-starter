@@ -146,7 +146,7 @@ class SaveReminderFragment : BaseFragment() {
 
     private fun checkLocation(resolve: Boolean = true) {
         val locationRequest = LocationRequest.create().apply {
-            priority = LocationRequest.PRIORITY_LOW_POWER
+            priority = LocationRequest.PRIORITY_HIGH_ACCURACY
         }
 
         val builder = LocationSettingsRequest.Builder().addLocationRequest(locationRequest)
@@ -207,7 +207,7 @@ class SaveReminderFragment : BaseFragment() {
                         requireContext(), R.string.geofence_added,
                         Toast.LENGTH_SHORT
                     ).show()
-                    Log.e("Add Geofence", geofence.requestId)
+                    Log.d("Add Geofence", geofence.requestId)
                 }
                 addOnFailureListener { exception ->
                     Toast.makeText(
