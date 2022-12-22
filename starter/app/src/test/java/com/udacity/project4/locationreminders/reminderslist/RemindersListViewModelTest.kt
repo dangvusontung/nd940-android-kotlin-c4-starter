@@ -2,17 +2,20 @@ package com.udacity.project4.locationreminders.reminderslist
 
 import androidx.arch.core.executor.testing.InstantTaskExecutorRule
 import androidx.test.core.app.ApplicationProvider
+import androidx.test.espresso.IdlingRegistry
 import androidx.test.ext.junit.runners.AndroidJUnit4
 import com.udacity.project4.locationreminders.MainCoroutineRule
 import com.udacity.project4.locationreminders.MockData
 import com.udacity.project4.locationreminders.data.FakeDataSource
 import com.udacity.project4.locationreminders.getOrAwaitValue
+import com.udacity.project4.utils.EspressoIdlingResource
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.test.runBlockingTest
 import org.hamcrest.CoreMatchers
 import org.hamcrest.MatcherAssert
 import org.hamcrest.core.Is.`is`
 import org.junit.After
+import org.junit.Before
 import org.junit.Rule
 import org.junit.Test
 import org.junit.runner.RunWith
@@ -47,11 +50,12 @@ class RemindersListViewModelTest {
     }
 
     @Test
-    fun test_loadRemindersWithNullDataSource_error() = runBlockingTest {
+    fun test_loadReminders_success_error() = runBlockingTest {
         //GIVEN
-        val fakeDataSource = FakeDataSource(null)
+        val fakeDataSource = FakeDataSource(MockData.fakeReminders)
         val remindersListViewModel =
             RemindersListViewModel(ApplicationProvider.getApplicationContext(), fakeDataSource)
+        fakeDataSource.setReturnError(true)
 
         //WHEN
         remindersListViewModel.loadReminders()
@@ -63,7 +67,7 @@ class RemindersListViewModelTest {
         )
     }
 
-    @Test
+  @Test
     fun test_loadReminders_showLoading() = runBlockingTest {
         //GIVEN
         val fakeDataSource = FakeDataSource(MockData.fakeReminders)
@@ -88,4 +92,10 @@ class RemindersListViewModelTest {
     fun tearDown(){
         stopKoin()
     }
+
+    @After
+    fun unregisterIdlingResource() {
+        IdlingRegistry.getInstance().unregister(EspressoIdlingResource.countingIdlingResource)
+    }
+
 }

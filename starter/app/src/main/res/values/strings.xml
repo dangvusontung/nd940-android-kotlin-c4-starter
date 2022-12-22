@@ -36,6 +36,7 @@
 
     <string name="here">Here</string>
     <string name="geofence_added">Geofence added</string>
+    <string name="not_selecting_poi">You\'re not selecting POI</string>
 
 
     <!-- Error strings -->

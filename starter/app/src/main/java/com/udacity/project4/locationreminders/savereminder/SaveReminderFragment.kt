@@ -5,6 +5,7 @@ import android.annotation.SuppressLint
 import android.annotation.TargetApi
 import android.app.PendingIntent
 import android.content.Intent
+import android.content.IntentSender
 import android.content.pm.PackageManager
 import android.net.Uri
 import android.os.Build
@@ -18,6 +19,7 @@ import android.widget.Toast
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.core.app.ActivityCompat
 import androidx.databinding.DataBindingUtil
+import com.google.android.gms.common.api.ResolvableApiException
 import com.google.android.gms.location.*
 import com.google.android.material.snackbar.Snackbar
 import com.udacity.project4.BuildConfig
@@ -56,7 +58,7 @@ class SaveReminderFragment : BaseFragment() {
                     true
                 }
 
-            if (accessFineLocationGranted && accessBackgroundLocationGranted) {
+            if (!accessBackgroundLocationGranted && !accessFineLocationGranted) {
                 Snackbar.make(
                     binding.root,
                     R.string.permission_denied_explanation,
@@ -70,7 +72,11 @@ class SaveReminderFragment : BaseFragment() {
                         }
                         startActivity(intent)
                     }
-            } else {
+                    .show()
+                return@registerForActivityResult
+            }
+
+            if (accessFineLocationGranted && accessBackgroundLocationGranted) {
                 startGeofencing()
             }
         }
@@ -145,16 +151,26 @@ class SaveReminderFragment : BaseFragment() {
     }
 
     private fun checkLocation(resolve: Boolean = true) {
+        Log.d(TAG, "checkLocation: checkLocation")
         val locationRequest = LocationRequest.create().apply {
-            priority = LocationRequest.PRIORITY_HIGH_ACCURACY
+            priority = LocationRequest.PRIORITY_LOW_POWER
         }
 
         val builder = LocationSettingsRequest.Builder().addLocationRequest(locationRequest)
         val settingsClient = LocationServices.getSettingsClient(requireContext())
         val locationSettingResponseTask = settingsClient.checkLocationSettings(builder.build())
 
-        locationSettingResponseTask.addOnFailureListener {
-            if (resolve) {
+        locationSettingResponseTask.addOnFailureListener { exception ->
+            if (exception is ResolvableApiException && resolve) {
+                try {
+                    exception.startResolutionForResult(
+                        requireActivity(),
+                        REQUEST_TURN_DEVICE_LOCATION_ON
+                    )
+                } catch (sendEx: IntentSender.SendIntentException) {
+                    Log.d(TAG, "checkLocation: ${sendEx.message}")
+                }
+            } else {
                 Snackbar.make(
                     binding.root,
                     R.string.location_required_error,
@@ -252,8 +268,17 @@ class SaveReminderFragment : BaseFragment() {
         requestPermissionLauncher.launch(permissions)
     }
 
+    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
+        Log.d(TAG, "onActivityResult: ")
+        super.onActivityResult(requestCode, resultCode, data)
+        if (resultCode == REQUEST_TURN_DEVICE_LOCATION_ON) {
+            checkLocation()
+        }
+    }
+
     companion object {
         const val ACTION_GEOFENCE_EVENT = "ACTION_GEOFENCE_EVENT"
         const val GEOFENCE_RADIUS_IN_METERS = 100f
+        const val REQUEST_TURN_DEVICE_LOCATION_ON = 1000
     }
 }

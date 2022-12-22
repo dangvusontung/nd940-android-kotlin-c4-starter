@@ -123,7 +123,7 @@ class RemindersActivityTest :
         Espresso.onView(
             ViewMatchers.withId(R.id.map)
         ).perform(
-            ViewActions.longClick()
+            ViewActions.click()
         )
 
         Espresso.onView(
@@ -225,7 +225,7 @@ class RemindersActivityTest :
         Espresso.onView(
             ViewMatchers.withId(R.id.map)
         ).perform(
-            ViewActions.longClick()
+            ViewActions.click()
         )
 
         Espresso.onView(

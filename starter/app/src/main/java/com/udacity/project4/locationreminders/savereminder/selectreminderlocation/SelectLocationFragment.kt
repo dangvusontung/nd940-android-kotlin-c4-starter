@@ -14,6 +14,7 @@ import android.os.Bundle
 import android.provider.Settings
 import android.util.Log
 import android.view.*
+import android.widget.Toast
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
@@ -232,6 +233,9 @@ class SelectLocationFragment : BaseFragment() {
 
             map.addMarker(marker).showInfoWindow()
             this.selectedLocation = it
+
+            // Added to show user that not selecting POI
+            Toast.makeText(requireContext(), getString(R.string.not_selecting_poi), Toast.LENGTH_LONG).show()
         }
     }
 
