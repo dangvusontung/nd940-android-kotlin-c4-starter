@@ -19,6 +19,7 @@ import android.widget.Toast
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.core.app.ActivityCompat
 import androidx.databinding.DataBindingUtil
+import androidx.fragment.app.Fragment
 import com.google.android.gms.common.api.ResolvableApiException
 import com.google.android.gms.location.*
 import com.google.android.material.snackbar.Snackbar
@@ -160,12 +161,24 @@ class SaveReminderFragment : BaseFragment() {
         val settingsClient = LocationServices.getSettingsClient(requireContext())
         val locationSettingResponseTask = settingsClient.checkLocationSettings(builder.build())
 
+        // If you're using simulator, you have to go to any map screen to trigger any update
+        // On the real device, the update is triggered with a period of time
         locationSettingResponseTask.addOnFailureListener { exception ->
             if (exception is ResolvableApiException && resolve) {
                 try {
                     exception.startResolutionForResult(
                         requireActivity(),
                         REQUEST_TURN_DEVICE_LOCATION_ON
+                    )
+
+                    startIntentSenderForResult(
+                        exception.resolution.intentSender,
+                        REQUEST_TURN_DEVICE_LOCATION_ON,
+                        null,
+                        0,
+                        0,
+                        0,
+                        null
                     )
                 } catch (sendEx: IntentSender.SendIntentException) {
                     Log.d(TAG, "checkLocation: ${sendEx.message}")
@@ -194,8 +207,8 @@ class SaveReminderFragment : BaseFragment() {
             val geofence = Geofence.Builder()
                 .setRequestId(reminderData.id)
                 .setCircularRegion(
-                    reminderData.latitude ?: 0.0,
-                    reminderData.longitude ?: 0.0,
+                    reminderData.latitude!!,
+                    reminderData.longitude!!,
                     GEOFENCE_RADIUS_IN_METERS
                 )
                 .setExpirationDuration(Geofence.NEVER_EXPIRE)

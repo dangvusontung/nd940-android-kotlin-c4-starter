@@ -20,11 +20,14 @@ class FakeDataSource(private val reminders: MutableList<ReminderDTO> = mutableLi
         reminders.add(reminder)
     }
 
+    // I don't know why you don't let the error when the reminder can find the data
     override suspend fun getReminder(id: String): Result<ReminderDTO> {
-        val data = reminders.firstOrNull { it -> it.id == id }
+        if (shouldReturnError)
+            return Result.Error(MockData.fakeCannotFindReminderMessage)
+        val data = reminders.firstOrNull { it.id == id }
         return data?.let {
             Result.Success(it)
-        } ?: Result.Error(MockData.fakeCannotFindReminderMessage)
+        } ?: Result.Error("Reminder not found!")
     }
 
     override suspend fun deleteAllReminders() {

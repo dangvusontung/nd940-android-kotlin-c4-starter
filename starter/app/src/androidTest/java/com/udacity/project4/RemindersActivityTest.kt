@@ -1,16 +1,24 @@
 package com.udacity.project4
 
 import android.app.Application
+import android.view.View
 import androidx.test.core.app.ActivityScenario
 import androidx.test.core.app.ApplicationProvider.getApplicationContext
 import androidx.test.core.app.launchActivity
 import androidx.test.espresso.Espresso
+import androidx.test.espresso.Espresso.onView
 import androidx.test.espresso.action.ViewActions
 import androidx.test.espresso.assertion.ViewAssertions
+import androidx.test.espresso.assertion.ViewAssertions.matches
+import androidx.test.espresso.matcher.RootMatchers
+import androidx.test.espresso.matcher.RootMatchers.withDecorView
 import androidx.test.espresso.matcher.ViewMatchers
+import androidx.test.espresso.matcher.ViewMatchers.isDisplayed
 import androidx.test.espresso.matcher.ViewMatchers.withText
+import androidx.test.ext.junit.rules.ActivityScenarioRule
 import androidx.test.ext.junit.runners.AndroidJUnit4
 import androidx.test.filters.LargeTest
+import androidx.test.rule.ActivityTestRule
 import com.udacity.project4.locationreminders.RemindersActivity
 import com.udacity.project4.locationreminders.data.ReminderDataSource
 import com.udacity.project4.locationreminders.data.local.LocalDB
@@ -18,11 +26,13 @@ import com.udacity.project4.locationreminders.data.local.RemindersLocalRepositor
 import com.udacity.project4.locationreminders.reminderslist.RemindersListViewModel
 import com.udacity.project4.locationreminders.savereminder.SaveReminderViewModel
 import com.udacity.project4.util.DataBindingIdlingResource
-import com.udacity.project4.util.ToastMatcher
 import com.udacity.project4.util.monitorActivity
 import kotlinx.coroutines.runBlocking
+import org.hamcrest.CoreMatchers.`is`
+import org.hamcrest.CoreMatchers.not
 import org.hamcrest.Matchers
 import org.junit.Before
+import org.junit.Rule
 import org.junit.Test
 import org.junit.runner.RunWith
 import org.koin.androidx.viewmodel.dsl.viewModel
@@ -42,6 +52,9 @@ class RemindersActivityTest :
     private lateinit var appContext: Application
     private lateinit var activityScenario: ActivityScenario<RemindersActivity>
     private val dataBindingIdlingResource = DataBindingIdlingResource()
+
+    @Rule
+    lateinit var activityTestRule: ActivityTestRule<RemindersActivity>
 
     /**
      * As we use Koin as a Service Locator Library to develop our code, we'll also use Koin to test our code.
@@ -78,6 +91,8 @@ class RemindersActivityTest :
         runBlocking {
             repository.deleteAllReminders()
         }
+
+        activityTestRule  = ActivityTestRule(RemindersActivity::class.java)
     }
 
 
@@ -86,6 +101,7 @@ class RemindersActivityTest :
     fun test_addReminder_success() {
         val data = MockData.normalReminderDTO
         activityScenario = launchActivity()
+//        activityScenarioRule = ActivityScenarioRule(RemindersActivity::class.java)
         dataBindingIdlingResource.monitorActivity(activityScenario)
 
         Espresso.onView(
@@ -164,13 +180,13 @@ class RemindersActivityTest :
 
         Thread.sleep(1000)
 
-        Espresso.onView(
-            ViewMatchers.withText(R.string.reminder_saved)
-        ).inRoot(
-            ToastMatcher().apply {
-                matches(ViewMatchers.isDisplayed())
-            }
-        )
+        onView(withText(R.string.reminder_saved)).inRoot(
+            withDecorView(
+                not(
+                    activityTestRule.activity.window.decorView
+                )
+            )
+        ).check(matches(isDisplayed()))
 
         Espresso.onView(
             withText(data.title)

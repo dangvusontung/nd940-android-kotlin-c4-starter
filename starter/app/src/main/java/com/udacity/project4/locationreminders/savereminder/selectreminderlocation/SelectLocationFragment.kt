@@ -48,6 +48,7 @@ class SelectLocationFragment : BaseFragment() {
     override val _viewModel: SaveReminderViewModel by inject()
     private lateinit var binding: FragmentSelectLocationBinding
     private lateinit var map: GoogleMap
+    private var currentLocation = LatLng(21.0461, 105.7963)
 
     private var selectedLocation: LatLng? = null
     private var pointOfInterest: PointOfInterest? = null
@@ -185,8 +186,10 @@ class SelectLocationFragment : BaseFragment() {
             locationResult.addOnCompleteListener(requireActivity()) { task ->
                 if (task.isSuccessful) {
                     // TODO: zoom to the user location after taking his permission
-                    val currentLocation = task.result
-                    currentLocation?.let {
+                    task.result?.let {
+                        currentLocation = LatLng(it.latitude, it.longitude)
+                    }
+                    currentLocation.let {
                         map.moveCamera(
                             CameraUpdateFactory.newLatLngZoom(
                                 LatLng(it.latitude, it.longitude),
@@ -220,19 +223,23 @@ class SelectLocationFragment : BaseFragment() {
 
     private fun onLongClick(map: GoogleMap) {
         map.setOnMapClickListener {
-            map.clear()
-            val snippet = String.format(
-                Locale.getDefault(),
-                "Lat: %1$.3f, Long: %2$.3f",
-                it.latitude,
-                it.longitude
-            )
 
-            val marker = MarkerOptions().position(it).title(getString(R.string.here))
-                .snippet(snippet)
-
-            map.addMarker(marker).showInfoWindow()
-            this.selectedLocation = it
+            //Should I remove it, or still let the user click on the map?
+            // I don't think that the it should show a notification?
+            // I don't understand what do you mean a wrong longitude? I removed the default value 0.0 in addGeofenceForFClue in SaveReminderFragment
+//            map.clear()
+//            val snippet = String.format(
+//                Locale.getDefault(),
+//                "Lat: %1$.3f, Long: %2$.3f",
+//                it.latitude,
+//                it.longitude
+//            )
+//
+//            val marker = MarkerOptions().position(it).title(getString(R.string.here))
+//                .snippet(snippet)
+//
+//            map.addMarker(marker).showInfoWindow()
+//            this.selectedLocation = it
 
             // Added to show user that not selecting POI
             Toast.makeText(requireContext(), getString(R.string.not_selecting_poi), Toast.LENGTH_LONG).show()
