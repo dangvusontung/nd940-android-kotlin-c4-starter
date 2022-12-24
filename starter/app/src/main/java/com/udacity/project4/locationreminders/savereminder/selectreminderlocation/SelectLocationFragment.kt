@@ -105,6 +105,8 @@ class SelectLocationFragment : BaseFragment() {
         //        TODO: When the user confirms on the selected location,
         //         send back the selected location details to the view model
         //         and navigate back to the previous fragment to save the reminder and add the geofence
+
+
         _viewModel.apply {
             if (selectedLocation != null) {
                 // Because we checked for nullability of selected location, we can "force-unwrap" it properties here
@@ -114,6 +116,9 @@ class SelectLocationFragment : BaseFragment() {
                 // The same with PoI
                 latitude.value = pointOfInterest!!.latLng.latitude
                 longitude.value = pointOfInterest!!.latLng.longitude
+            } else {
+                Toast.makeText(requireContext(), "Please select a location", Toast.LENGTH_SHORT).show()
+                return
             }
             selectedPOI.value = pointOfInterest
             reminderSelectedLocationStr.value =
