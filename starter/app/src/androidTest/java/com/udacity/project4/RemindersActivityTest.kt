@@ -189,14 +189,14 @@ https://stackoverflow.com/questions/29896223/android-espresso-how-to-check-that-
 So, I commented out this code. Hope we can skip this one?s
         */
 
-
-//        onView(withText(R.string.reminder_saved)).inRoot(
-//            withDecorView(
-//                not(
-//                    activityTestRule.activity.window.decorView
-//                )
-//            )
-//        ).check(matches(isDisplayed()))
+    //OK, this can run on pixel 3 API 28 emulator
+        onView(withText(R.string.reminder_saved)).inRoot(
+            withDecorView(
+                not(
+                    activityTestRule.activity?.window?.decorView
+                )
+            )
+        ).check(matches(isDisplayed()))
 
         Espresso.onView(
             withText(data.title)

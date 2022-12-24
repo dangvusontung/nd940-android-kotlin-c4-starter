@@ -265,7 +265,10 @@ class SaveReminderFragment : BaseFragment() {
                 Manifest.permission.ACCESS_BACKGROUND_LOCATION
             )
 
-        return foregroundPermissionApproved && backgroundPermissionApproved
+        return if (runningQOrLater)
+            foregroundPermissionApproved && backgroundPermissionApproved
+        else
+            foregroundPermissionApproved
     }
 
     @TargetApi(29)
