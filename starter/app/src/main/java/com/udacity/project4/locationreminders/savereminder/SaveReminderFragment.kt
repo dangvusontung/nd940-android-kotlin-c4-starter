@@ -33,6 +33,7 @@ import com.udacity.project4.locationreminders.geofence.GeofenceBroadcastReceiver
 import com.udacity.project4.locationreminders.reminderslist.ReminderDataItem
 import com.udacity.project4.utils.setDisplayHomeAsUpEnabled
 import org.koin.android.ext.android.inject
+import kotlin.math.log
 
 private const val TAG = "SaveReminderFragment"
 
@@ -200,6 +201,7 @@ class SaveReminderFragment : BaseFragment() {
     @SuppressLint("MissingPermission")
     private fun addGeofenceForClue() {
         cacheReminderDataItem?.let { reminderData ->
+            Log.d(TAG, "addGeofenceForClue: ${reminderData.latitude}, ${reminderData.longitude}")
             val geofence = Geofence.Builder()
                 .setRequestId(reminderData.id)
                 .setCircularRegion(
@@ -280,8 +282,10 @@ class SaveReminderFragment : BaseFragment() {
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
         Log.d(TAG, "onActivityResult: ")
         super.onActivityResult(requestCode, resultCode, data)
-        if (resultCode == REQUEST_TURN_DEVICE_LOCATION_ON && resultCode == Activity.RESULT_OK) {
-            checkLocation()
+        if (resultCode == REQUEST_TURN_DEVICE_LOCATION_ON) {
+            if (resultCode == Activity.RESULT_OK) {
+                checkLocation()
+            }
         }
     }
 

@@ -109,7 +109,7 @@ class SelectLocationFragment : BaseFragment() {
             if (selectedLocation != null) {
                 // Because we checked for nullability of selected location, we can "force-unwrap" it properties here
                 latitude.value = selectedLocation!!.latitude
-                longitude.value = selectedLocation!!.latitude
+                longitude.value = selectedLocation!!.longitude
             } else if (pointOfInterest != null) {
                 // The same with PoI
                 latitude.value = pointOfInterest!!.latLng.latitude
@@ -223,7 +223,8 @@ class SelectLocationFragment : BaseFragment() {
 
     private fun onLongClick(map: GoogleMap) {
         map.setOnMapClickListener {
-          it?.let {
+            Log.d(TAG, "onLongClick: ${it.latitude}, ${it.longitude}")
+            it?.let {
               map.clear()
               val snippet = String.format(
                   Locale.getDefault(),

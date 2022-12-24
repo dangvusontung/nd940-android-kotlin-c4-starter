@@ -63,7 +63,7 @@ class RemindersListViewModelTest {
         //THEN
         MatcherAssert.assertThat(
             remindersListViewModel.showSnackBar.getOrAwaitValue(),
-            `is`(MockData.fakeNoReminderMessage)
+            `is`("Mock exception!")
         )
     }
 

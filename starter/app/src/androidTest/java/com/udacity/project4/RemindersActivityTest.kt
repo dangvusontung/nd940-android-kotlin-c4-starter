@@ -180,7 +180,15 @@ class RemindersActivityTest :
 
         Thread.sleep(1000)
 
-        //Yeah, tried this to test toast as searched many StackOverFlow post, but it doesn't work
+        /*Yeah, tried this to test toast as searched many StackOverFlow post, but it doesn't work
+        https://stackoverflow.com/questions/28390574/checking-toast-message-in-android-espresso/28606603#28606603
+https://stackoverflow.com/questions/47092927/testing-toast-message-using-espresso-is-not-resolved
+https://stackoverflow.com/questions/67771360/android-espresso-toast-message-assertions-not-working-with-sdk-30
+https://stackoverflow.com/questions/29896223/android-espresso-how-to-check-that-toast-message-is-not-shown
+
+So, I commented out this code. Hope we can skip this one?s
+        */
+
 
 //        onView(withText(R.string.reminder_saved)).inRoot(
 //            withDecorView(
