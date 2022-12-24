@@ -3,6 +3,7 @@ package com.udacity.project4.locationreminders.savereminder
 import android.Manifest
 import android.annotation.SuppressLint
 import android.annotation.TargetApi
+import android.app.Activity
 import android.app.PendingIntent
 import android.content.Intent
 import android.content.IntentSender
@@ -166,11 +167,6 @@ class SaveReminderFragment : BaseFragment() {
         locationSettingResponseTask.addOnFailureListener { exception ->
             if (exception is ResolvableApiException && resolve) {
                 try {
-                    exception.startResolutionForResult(
-                        requireActivity(),
-                        REQUEST_TURN_DEVICE_LOCATION_ON
-                    )
-
                     startIntentSenderForResult(
                         exception.resolution.intentSender,
                         REQUEST_TURN_DEVICE_LOCATION_ON,
@@ -284,7 +280,7 @@ class SaveReminderFragment : BaseFragment() {
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
         Log.d(TAG, "onActivityResult: ")
         super.onActivityResult(requestCode, resultCode, data)
-        if (resultCode == REQUEST_TURN_DEVICE_LOCATION_ON) {
+        if (resultCode == REQUEST_TURN_DEVICE_LOCATION_ON && resultCode == Activity.RESULT_OK) {
             checkLocation()
         }
     }

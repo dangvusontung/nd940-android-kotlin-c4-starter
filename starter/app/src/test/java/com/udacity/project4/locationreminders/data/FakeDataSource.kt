@@ -11,9 +11,14 @@ class FakeDataSource(private val reminders: MutableList<ReminderDTO> = mutableLi
 //    TODO: Create a fake data source to act as a double to the real data source
 
     private var shouldReturnError = false
+    private lateinit var exception: Exception
 
     override suspend fun getReminders(): Result<List<ReminderDTO>> {
-        return if (!shouldReturnError) Result.Success(reminders) else Result.Error(MockData.fakeNoReminderMessage)
+        exception = IllegalAccessException("Mock exception!")
+        return if (!shouldReturnError)
+            Result.Success(reminders)
+        else
+            Result.Error(exception.localizedMessage)
     }
 
     override suspend fun saveReminder(reminder: ReminderDTO) {

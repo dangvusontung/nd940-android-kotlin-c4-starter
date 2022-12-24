@@ -32,7 +32,7 @@ object MockData {
         normalReminderDTO,
     )
 
-    const val fakeNoReminderMessage = "No remiders"
+    const val fakeNoReminderMessage = "No reminders"
 
     const val fakeCannotFindReminderMessage = "Can't get reminder"
 

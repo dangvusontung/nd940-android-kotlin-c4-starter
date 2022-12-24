@@ -223,26 +223,21 @@ class SelectLocationFragment : BaseFragment() {
 
     private fun onLongClick(map: GoogleMap) {
         map.setOnMapClickListener {
+          it?.let {
+              map.clear()
+              val snippet = String.format(
+                  Locale.getDefault(),
+                  "Lat: %1$.3f, Long: %2$.3f",
+                  it.latitude,
+                  it.longitude
+              )
 
-            //Should I remove it, or still let the user click on the map?
-            // I don't think that the it should show a notification?
-            // I don't understand what do you mean a wrong longitude? I removed the default value 0.0 in addGeofenceForFClue in SaveReminderFragment
-//            map.clear()
-//            val snippet = String.format(
-//                Locale.getDefault(),
-//                "Lat: %1$.3f, Long: %2$.3f",
-//                it.latitude,
-//                it.longitude
-//            )
-//
-//            val marker = MarkerOptions().position(it).title(getString(R.string.here))
-//                .snippet(snippet)
-//
-//            map.addMarker(marker).showInfoWindow()
-//            this.selectedLocation = it
+              val marker = MarkerOptions().position(it).title(getString(R.string.here))
+                  .snippet(snippet)
 
-            // Added to show user that not selecting POI
-            Toast.makeText(requireContext(), getString(R.string.not_selecting_poi), Toast.LENGTH_LONG).show()
+              map.addMarker(marker).showInfoWindow()
+              this.selectedLocation = it
+          }
         }
     }
 
