@@ -31,6 +31,7 @@ import com.udacity.project4.base.NavigationCommand
 import com.udacity.project4.databinding.FragmentSaveReminderBinding
 import com.udacity.project4.locationreminders.geofence.GeofenceBroadcastReceiver
 import com.udacity.project4.locationreminders.reminderslist.ReminderDataItem
+import com.udacity.project4.utils.ToastManager
 import com.udacity.project4.utils.setDisplayHomeAsUpEnabled
 import org.koin.android.ext.android.inject
 import kotlin.math.log
@@ -230,10 +231,11 @@ class SaveReminderFragment : BaseFragment() {
             geofencingClient.addGeofences(geofencingRequest, geofencePendingIntent)?.run {
                 addOnSuccessListener {
                     _viewModel.saveReminder(reminderData)
-                    Toast.makeText(
-                        requireContext(), R.string.geofence_added,
-                        Toast.LENGTH_SHORT
-                    ).show()
+//                    Toast.makeText(
+//                        requireContext(), R.string.geofence_added,
+//                        Toast.LENGTH_SHORT
+//                    ).show()
+                    ToastManager.showToast(requireContext(), getString(R.string.geofence_added), Toast.LENGTH_SHORT).show()
                     Log.d("Add Geofence", geofence.requestId)
                 }
                 addOnFailureListener { exception ->
@@ -285,7 +287,7 @@ class SaveReminderFragment : BaseFragment() {
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
         Log.d(TAG, "onActivityResult: ")
         super.onActivityResult(requestCode, resultCode, data)
-        if (resultCode == REQUEST_TURN_DEVICE_LOCATION_ON) {
+        if (requestCode == REQUEST_TURN_DEVICE_LOCATION_ON) {
             if (resultCode == Activity.RESULT_OK) {
                 checkLocation()
             }

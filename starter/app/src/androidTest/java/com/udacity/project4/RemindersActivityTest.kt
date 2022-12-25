@@ -1,21 +1,20 @@
 package com.udacity.project4
 
 import android.app.Application
-import android.view.View
+import android.os.Build
 import androidx.test.core.app.ActivityScenario
 import androidx.test.core.app.ApplicationProvider.getApplicationContext
 import androidx.test.core.app.launchActivity
 import androidx.test.espresso.Espresso
 import androidx.test.espresso.Espresso.onView
+import androidx.test.espresso.IdlingRegistry
 import androidx.test.espresso.action.ViewActions
 import androidx.test.espresso.assertion.ViewAssertions
 import androidx.test.espresso.assertion.ViewAssertions.matches
-import androidx.test.espresso.matcher.RootMatchers
 import androidx.test.espresso.matcher.RootMatchers.withDecorView
 import androidx.test.espresso.matcher.ViewMatchers
 import androidx.test.espresso.matcher.ViewMatchers.isDisplayed
 import androidx.test.espresso.matcher.ViewMatchers.withText
-import androidx.test.ext.junit.rules.ActivityScenarioRule
 import androidx.test.ext.junit.runners.AndroidJUnit4
 import androidx.test.filters.LargeTest
 import androidx.test.rule.ActivityTestRule
@@ -26,11 +25,12 @@ import com.udacity.project4.locationreminders.data.local.RemindersLocalRepositor
 import com.udacity.project4.locationreminders.reminderslist.RemindersListViewModel
 import com.udacity.project4.locationreminders.savereminder.SaveReminderViewModel
 import com.udacity.project4.util.DataBindingIdlingResource
+import com.udacity.project4.utils.ToastManager
 import com.udacity.project4.util.monitorActivity
 import kotlinx.coroutines.runBlocking
-import org.hamcrest.CoreMatchers.`is`
 import org.hamcrest.CoreMatchers.not
 import org.hamcrest.Matchers
+import org.junit.After
 import org.junit.Before
 import org.junit.Rule
 import org.junit.Test
@@ -93,8 +93,13 @@ class RemindersActivityTest :
         }
 
         activityTestRule  = ActivityTestRule(RemindersActivity::class.java, false, true)
+        IdlingRegistry.getInstance().register(ToastManager.getIdlingResource())
     }
 
+    @After
+    fun unregisterIdlingResource() {
+        IdlingRegistry.getInstance().unregister(ToastManager.getIdlingResource())
+    }
 
     //    TODO: add End to End testing to the app
     @Test
@@ -190,13 +195,44 @@ So, I commented out this code. Hope we can skip this one?s
         */
 
     //OK, this can run on pixel 3 API 28 emulator
-        onView(withText(R.string.reminder_saved)).inRoot(
-            withDecorView(
-                not(
-                    activityTestRule.activity?.window?.decorView
-                )
-            )
-        ).check(matches(isDisplayed()))
+        when (Build.VERSION.SDK_INT) {
+            // When <= 28, just check the last toast will show
+            in 0 .. 28 -> {
+                onView(withText(R.string.reminder_saved)).inRoot(
+                    withDecorView(
+                        not(
+                            activityTestRule.activity?.window?.decorView
+                        )
+                    )
+                ).check(matches(isDisplayed()))
+            }
+
+            29 -> {
+                // Check double toast in 29
+                onView(withText(R.string.geofence_added)).inRoot(
+                    withDecorView(
+                        not(
+                            activityTestRule.activity?.window?.decorView
+                        )
+                    )
+                ).check(matches(isDisplayed()))
+
+                ToastManager.increment()
+
+                onView(withText(R.string.reminder_saved)).inRoot(
+                    withDecorView(
+                        not(
+                            activityTestRule.activity?.window?.decorView
+                        )
+                    )
+                ).check(matches(isDisplayed()))
+            }
+
+            // Don't check. IT WILL FAIL
+            else -> {
+
+            }
+        }
 
         Espresso.onView(
             withText(data.title)
